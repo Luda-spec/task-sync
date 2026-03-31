@@ -1,0 +1,8 @@
+node_modules
+.git
+.vscode
+*.log
+backend
+.next
+dist
+.DS_Store

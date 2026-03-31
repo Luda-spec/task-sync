@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+@theme inline {
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+
+  --font-sans: 'Lexend Deca', sans-serif;
+
+  --color-primary: #5F33E1;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #ece6ff;
+  --color-secondary-foreground: #6E6A7C;
+
+  --color-muted: #f5f3ff;
+  --color-muted-foreground: #AB94FF;
+
+  --color-accent: #E3F2FF;
+  --color-accent-foreground: #0087FF;
+  --color-accent2: #EEE9FF;
+  --color-accent2-foreground: #5F33E1;
+  --color-accent3: #FFE9E1;
+  --color-accent3-foreground: #FF7D53;
+
+  --radius-s: 7px; 
+  --radius-sm: 10px;   
+  --radius-md: 12px;   
+  --radius-lg: 14px;   
+  --radius-xl: 16px;   
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply font-sans text-foreground;
+    min-height: 100vh;
+    position: relative;
+    background-color: var(--color-background);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("/background_two.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+    z-index: -1;
+  }
+}
