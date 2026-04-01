@@ -22,8 +22,10 @@ export default function RegistrationPage() {
     const loadingToast = toast.loading('Регистрация...');
 
     try {
-      await AuthAPI.register(email, password, name);
+      const { data } = await AuthAPI.register(email, password, name);
       
+      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
       
       toast.success('Регистрация успешна! Добро пожаловать!', {
         id: loadingToast,
@@ -31,6 +33,7 @@ export default function RegistrationPage() {
       });
 
       router.push('/auth/login');
+      
     } catch (error: unknown) {
       let message = 'Ошибка регистрации';
 

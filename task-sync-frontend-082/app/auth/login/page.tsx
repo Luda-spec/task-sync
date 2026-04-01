@@ -22,13 +22,14 @@ export default function LoginPage() {
 
     try {
       const { data } = await AuthAPI.login(email, password);
+      
       localStorage.setItem('accessToken', data.accessToken);
-      if (data.refreshToken) {
-        localStorage.setItem('refreshToken', data.refreshToken);
-      }
+      localStorage.setItem('refreshToken', data.refreshToken);
       
       toast.success('Вы успешно вошли', { id: loadingToast });
+      
       router.push('/protected/home');
+      
     } catch (error: unknown) {
       let message = 'Ошибка авторизации';
 
