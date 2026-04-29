@@ -28,14 +28,16 @@ const RenderCustomizedLabel = ({ total }: { total: number }) => (
 );
 
 interface PriorityPieChartProps {
-  byPriority: { high: number; medium: number; low: number };
+  byPriority?: { high: number; medium: number; low: number }; 
 }
 
-export const PriorityPieChart = ({ byPriority }: PriorityPieChartProps) => {
+export const PriorityPieChart = ({ byPriority = { high: 0, medium: 0, low: 0 } }: PriorityPieChartProps) => {
+  const safeByPriority = byPriority || { high: 0, medium: 0, low: 0 };
+
   const priorityData: PriorityData[] = [
-    { name: 'Сложно', value: byPriority.high, color: '#5F33E1' },
-    { name: 'Средне', value: byPriority.medium, color: '#AB94FF' },
-    { name: 'Легко', value: byPriority.low, color: '#EEE9FF' },
+    { name: 'Сложно', value: safeByPriority.high, color: '#5F33E1' },
+    { name: 'Средне', value: safeByPriority.medium, color: '#AB94FF' },
+    { name: 'Легко', value: safeByPriority.low, color: '#EEE9FF' },
   ].filter(item => item.value > 0);
 
   const total = priorityData.reduce((sum, item) => sum + item.value, 0);

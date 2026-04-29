@@ -98,14 +98,15 @@ export const useAnalytics = (period: Period) => {
           return taskDate >= startDate && taskDate <= endDate;
         });
 
-        const completedTasks = filteredTasks.filter(t => t.isCompleted).length;
+        const completedTasksList = filteredTasks.filter(t => t.isCompleted);
+        const completedTasks = completedTasksList.length;
         const totalTasks = filteredTasks.length;
         const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
         const byPriority = {
-          high: filteredTasks.filter(t => t.priority === 'high').length,
-          medium: filteredTasks.filter(t => t.priority === 'medium').length,
-          low: filteredTasks.filter(t => t.priority === 'low').length,
+          high: completedTasksList.filter(t => t.priority === 'high').length,
+          medium: completedTasksList.filter(t => t.priority === 'medium').length,
+          low: completedTasksList.filter(t => t.priority === 'low').length,
         };
 
         const dailyStats: { label: string; value: number }[] = [];
