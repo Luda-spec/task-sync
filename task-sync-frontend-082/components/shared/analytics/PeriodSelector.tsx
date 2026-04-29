@@ -22,7 +22,7 @@ export const PeriodSelector = ({ period, onPeriodChange }: PeriodSelectorProps) 
         key={p}
         onClick={() => onPeriodChange(p)}
         variant={period === p ? 'default' : 'outline'}
-        className={`flex-1 text-xs sm:text-sm py-2 sm:py-3 ${
+        className={`flex-1 cursor-pointer text-xs sm:text-sm py-2 sm:py-3 ${
           period === p 
             ? 'bg-primary text-white border-0' 
             : 'bg-white text-foreground border-0 hover:bg-secondary/50'

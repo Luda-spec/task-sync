@@ -10,7 +10,7 @@ interface PomodoroControlsProps {
 export const PomodoroControls: FC<PomodoroControlsProps> = ({ onReset }) => (
   <button 
     onClick={onReset} 
-    className="mt-6 sm:mt-8 p-3 hover:bg-secondary/50 rounded-full transition-colors"
+    className="mt-6 sm:mt-8 p-3 hover:bg-secondary/50 rounded-full transition-colors cursor-pointer"
   >
     <Image 
       src="/replay.svg" 

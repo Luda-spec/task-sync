@@ -37,7 +37,7 @@ export const SettingsHeader = () => {
         variant="ghost"
         size="icon"
         onClick={() => router.back()}
-        className="absolute left-5 top-3 sm:top-5"
+        className="absolute left-5 top-3 sm:top-5 cursor-pointer"
       >
         <Image src="/arrow_back.svg" alt="Назад" width={24} height={24} />
       </Button>
@@ -53,7 +53,7 @@ export const SettingsHeader = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute right-5 top-3 sm:top-5"
+            className="absolute right-5 top-3 sm:top-5 cursor-pointer"
           >
             <Image src="/logout.svg" alt="Выйти" width={24} height={24} />
           </Button>

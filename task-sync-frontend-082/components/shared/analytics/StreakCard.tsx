@@ -12,7 +12,7 @@ export const StreakCard = ({ streakDays, onInfoClick }: StreakCardProps) => (
     <div className="flex items-center gap-2 sm:gap-3">
       <button 
         onClick={onInfoClick}
-        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors"
+        className="w-6 h-6  cursor-pointer sm:w-7 sm:h-7 flex items-center justify-center hover:bg-white/20 rounded-full transition-colors"
       >
         <Image src="/question.svg" alt="Информация" width={20} height={20} className="filter brightness-0 invert" />
       </button>

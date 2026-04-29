@@ -18,7 +18,7 @@ export const TaskFilters = ({ filter, setFilter }: Props) => {
           variant={filter === item ? 'filterActive' : 'filter'}
           size="sm"
           onClick={() => setFilter(item)}
-          className="whitespace-nowrap"
+          className="whitespace-nowrap cursor-pointer"
         >
           {item}
         </Button>

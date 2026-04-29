@@ -27,7 +27,7 @@ export const TasksHeader = ({ selectedDate, setSelectedDate, onOpenCalendar, rou
         variant="ghost"
         size="icon"
         onClick={() => router.back()}
-        className="absolute left-5 top-3 sm:top-5"
+        className="absolute left-5 top-3 sm:top-5 cursor-pointer"
       >
         <Image src="/arrow_back.svg" alt="Назад" width={24} height={24} />
       </Button>
@@ -77,7 +77,7 @@ export const TasksHeader = ({ selectedDate, setSelectedDate, onOpenCalendar, rou
             <Button
               key={date.toISOString()}
               variant={isSameDay(date, selectedDate) ? 'calendarActive' : 'calendar'}
-              className="min-w-16 h-auto py-4 px-3 flex flex-col gap-1 shrink-0"
+              className="min-w-16 h-auto py-4 px-3 flex flex-col gap-1 shrink-0 cursor-pointer"
               onClick={() => setSelectedDate(date)}
             >
               <span className="text-xs whitespace-nowrap">
@@ -94,7 +94,7 @@ export const TasksHeader = ({ selectedDate, setSelectedDate, onOpenCalendar, rou
           
           <Button
             variant="calendar"
-            className="min-w-16 h-auto py-4 px-3 flex flex-col items-center justify-center gap-1 shrink-0"
+            className="min-w-16 h-auto py-4 px-3 flex flex-col items-center justify-center gap-1 shrink-0 cursor-pointer"
             onClick={onOpenCalendar}
           >
             <span className="text-xs">&nbsp;</span> 

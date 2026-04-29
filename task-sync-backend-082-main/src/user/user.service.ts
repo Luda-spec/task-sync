@@ -81,19 +81,47 @@ export class UserService {
   }
 
   async update(id: string, dto: UserDto) {
-    const data: any = { ...dto };
+    const data: Record<string, any> = {};
 
+    if (dto.email !== undefined) {
+      data.email = dto.email.trim().toLowerCase();
+    }
+    if (dto.name !== undefined) {
+      data.name = dto.name.trim();
+    }
     if (dto.password) {
       data.password = await hash(dto.password);
     }
-
-    if (dto.email) {
-      data.email = dto.email.trim().toLowerCase();
+    if (dto.workInterval !== undefined) {
+      data.workInterval = dto.workInterval;
+    }
+    if (dto.breakInterval !== undefined) {
+      data.breakInterval = dto.breakInterval;
+    }
+    if (dto.intervalsCount !== undefined) {
+      data.intervalsCount = dto.intervalsCount;
+    }
+    if (dto.notificationsEnabled !== undefined) {
+      data.notificationsEnabled = dto.notificationsEnabled;
     }
 
-    if (dto.name) {
-      data.name = dto.name.trim();
-    }
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        workInterval: true,
+        breakInterval: true,
+        intervalsCount: true,
+        notificationsEnabled: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return updatedUser;
   }
 
   async getByIdForSelectData(userId: string) {

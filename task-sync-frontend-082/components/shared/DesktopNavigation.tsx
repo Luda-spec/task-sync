@@ -103,7 +103,7 @@ export const DesktopNavigation = () => {
                 onClick={() => router.push(item.path)}
                 className={`
                   flex items-center justify-center w-12 h-12 rounded-xl
-                  transition-all duration-200
+                  transition-all duration-200 cursor-pointer
                   ${isActive 
                     ? 'bg-primary shadow-md' 
                     : 'hover:bg-white/50'
@@ -121,12 +121,11 @@ export const DesktopNavigation = () => {
             );
           })}
 
-          {/* ✅ ПЛЮСИК */}
           <button
             onClick={centerAction.onClick}
             className="ml-2 w-12 h-12 rounded-xl bg-primary shadow-md
                        flex items-center justify-center
-                       hover:scale-105 transition-transform"
+                       hover:scale-105 transition-transform cursor-pointer"
           >
             <Image
               src={centerAction.icon}

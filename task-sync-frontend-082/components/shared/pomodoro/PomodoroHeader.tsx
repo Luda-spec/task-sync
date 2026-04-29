@@ -19,7 +19,7 @@ export const PomodoroHeader: FC<PomodoroHeaderProps> = ({ onInfoClick }) => {
         variant="ghost"
         size="icon"
         onClick={() => router.back()}
-        className="absolute left-5 top-3 sm:top-5"
+        className="absolute left-5 top-3 sm:top-5 cursor-pointer"
       >
         <Image src="/arrow_back.svg" alt="Назад" width={24} height={24} />
       </Button>
@@ -30,7 +30,7 @@ export const PomodoroHeader: FC<PomodoroHeaderProps> = ({ onInfoClick }) => {
         className="mx-auto font-semibold text-foreground" 
       />
 
-      <button onClick={onInfoClick} className="absolute right-5 top-3 sm:top-5 w-6 h-6">
+      <button onClick={onInfoClick} className="absolute right-5 top-3 sm:top-5 w-6 h-6 cursor-pointer">
         <Image src="/question.svg" alt="Информация" width={24} height={24} />
       </button>
     </div>

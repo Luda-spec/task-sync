@@ -11,6 +11,7 @@ import { RegisterDto } from './dto/register.dto';
 import { verify } from 'argon2';
 import { Response } from 'express';
 import * as nodemailer from 'nodemailer';
+import { Role } from '@prisma/client'; 
 
 @Injectable()
 export class AuthService {
@@ -33,12 +34,15 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto) {
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = await this.validateUser(dto);
-    const tokens = this.issueTokens(user.id);
+    const user = await this.validateUser(dto);
+    
+    const tokens = this.issueTokens(user.id, user.role);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
 
     return {
-      user,
+      user: userWithoutPassword,
       ...tokens  
     };
   }
@@ -50,22 +54,28 @@ export class AuthService {
       throw new BadRequestException("User already registered");
     }
 
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = await this.userService.create(dto);
-    const tokens = this.issueTokens(user.id);
+    const user = await this.userService.create(dto);
+    
+    const tokens = this.issueTokens(user.id, user.role);
 
     this.sendWelcomeEmail(user.email, user.name).catch(err => {
       console.error('Failed to send welcome email:', err);
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+
     return { 
-      user, 
+      user: userWithoutPassword, 
       ...tokens  
     };
   }
 
-  private issueTokens(userId: string) {
-    const data = { id: userId };
+  private issueTokens(userId: string, role: Role) {
+    const data = { 
+      id: userId,
+      role: role, 
+    };
 
     const accessToken = this.jwt.sign(data, {
       expiresIn: "1h"
@@ -114,12 +124,15 @@ export class AuthService {
       throw new UnauthorizedException("Invalid refresh token");
     }
 
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = await this.userService.getById(result.id);
-    const tokens = this.issueTokens(user.id);
+    const user = await this.userService.getById(result.id);
+    
+    const tokens = this.issueTokens(user.id, user.role);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
 
     return {
-      user,
+      user: userWithoutPassword,
       ...tokens,
     };
   }
@@ -161,7 +174,6 @@ export class AuthService {
         `,
       });
     } catch (error) {
-
     }
   }
 }
