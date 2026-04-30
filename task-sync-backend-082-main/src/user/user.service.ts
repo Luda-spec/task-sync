@@ -3,7 +3,7 @@ import { hash } from 'argon2';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserDto } from './dto/user.dto';
-import { startOfDay, subDays } from 'date-fns';
+import { startOfDay, subDays, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class UserService {
@@ -25,12 +25,9 @@ export class UserService {
   async getProfile(id: string) {
     const profile = await this.getById(id);
 
-    if (!profile) {
-      return null;
-    }
+    if (!profile) return null;
 
     const totalTasks = profile.tasks?.length || 0;
-
     const completedTasks = await this.prisma.task.count({
       where: { userId: id, isCompleted: true },
     });
@@ -83,29 +80,17 @@ export class UserService {
   async update(id: string, dto: UserDto) {
     const data: Record<string, any> = {};
 
-    if (dto.email !== undefined) {
-      data.email = dto.email.trim().toLowerCase();
-    }
-    if (dto.name !== undefined) {
-      data.name = dto.name.trim();
-    }
-    if (dto.password) {
-      data.password = await hash(dto.password);
-    }
-    if (dto.workInterval !== undefined) {
-      data.workInterval = dto.workInterval;
-    }
-    if (dto.breakInterval !== undefined) {
-      data.breakInterval = dto.breakInterval;
-    }
-    if (dto.intervalsCount !== undefined) {
-      data.intervalsCount = dto.intervalsCount;
-    }
+    if (dto.email !== undefined) data.email = dto.email.trim().toLowerCase();
+    if (dto.name !== undefined) data.name = dto.name.trim();
+    if (dto.password) data.password = await hash(dto.password);
+    if (dto.workInterval !== undefined) data.workInterval = dto.workInterval;
+    if (dto.breakInterval !== undefined) data.breakInterval = dto.breakInterval;
+    if (dto.intervalsCount !== undefined) data.intervalsCount = dto.intervalsCount;
     if (dto.notificationsEnabled !== undefined) {
       data.notificationsEnabled = dto.notificationsEnabled;
     }
 
-    const updatedUser = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id },
       data,
       select: {
@@ -120,8 +105,6 @@ export class UserService {
         updatedAt: true,
       },
     });
-
-    return updatedUser;
   }
 
   async getByIdForSelectData(userId: string) {
@@ -132,5 +115,42 @@ export class UserService {
         notificationsEnabled: true,
       },
     });
+  }
+
+  async getWeeklyRating() {
+    const now = new Date();
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    weekStart.setHours(0, 0, 0, 0);
+
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        _count: {
+          select: {
+            tasks: {
+              where: {
+                isCompleted: true,
+                updatedAt: { gte: weekStart.toISOString() },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        tasks: { _count: 'desc' },
+      },
+      take: 3,
+    });
+
+    return users
+    .filter((u) => u._count.tasks > 0)
+    .map((u) => ({
+      id: u.id,
+      name: u.name || 'Без имени',
+      email: u.email, 
+      completedTasks: u._count.tasks,
+    }));
   }
 }

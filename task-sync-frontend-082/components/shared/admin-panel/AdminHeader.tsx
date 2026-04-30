@@ -21,7 +21,7 @@ export const AdminHeader = ({ onBack }: AdminHeaderProps) => {
       </Button>
 
       <Title 
-        text="Панель администратора" 
+        text="Админ панель" 
         size="md" 
         className="mx-auto font-semibold text-foreground" 
       />

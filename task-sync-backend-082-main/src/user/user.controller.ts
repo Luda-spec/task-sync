@@ -4,22 +4,26 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { UserDto } from './dto/user.dto';
 
-@Controller('user/profile')
+@Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('profile')
   @Auth()
-  async profile(@CurrentUser("id") id: string) {
-    return this.userService.getProfile(id)
+  async profile(@CurrentUser('id') id: string) {
+    return this.userService.getProfile(id);
   }
 
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
-  @Put()
+  @Put('profile')
   @Auth()
-  async updateProfile(@CurrentUser("id") id: string, @Body() dto: UserDto) {
-    return this.userService.update(id, dto)
+  async updateProfile(@CurrentUser('id') id: string, @Body() dto: UserDto) {
+    return this.userService.update(id, dto);
+  }
+
+  @Get('rating')
+  async getWeeklyRating() {
+    return this.userService.getWeeklyRating();
   }
 }
-

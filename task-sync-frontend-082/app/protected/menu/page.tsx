@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { MenuHeader } from "@/components/shared/menu/MenuHeader";
 import { MenuGrid } from "@/components/shared/menu/MenuGrid";
 
@@ -21,7 +21,7 @@ const checkIsAdmin = (): boolean => {
 export default function Menu() {
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsAdmin(checkIsAdmin());
   }, []);
 
@@ -30,6 +30,7 @@ export default function Menu() {
     { label: "Задачи", icon: "/tasks.svg", href: "/protected/tasks" },
     { label: "Помодоро", icon: "/pomodoro.svg", href: "/protected/pomodoro" },
     { label: "Аналитика", icon: "/analytics.svg", href: "/protected/analytics" },
+    { label: "Рейтинг", icon: "/trophy.svg", href: "/protected/leaderboard" }, 
     ...(isAdmin ? [{ label: "Админ панель", icon: "/admin.svg", href: "/protected/admin" }] : []),
   ];
 

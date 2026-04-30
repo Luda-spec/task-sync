@@ -9,6 +9,7 @@ interface UITask {
   timeTo?: string;    
   priority: 'Сложно' | 'Средне' | 'Легко';
   isCompleted: boolean;
+  scheduledAt?: string; 
 }
 
 type Props = {
@@ -42,6 +43,7 @@ export const TaskList = ({
           timeTo={task.timeTo}      
           priority={task.priority}
           checked={task.isCompleted}
+          scheduledAt={task.scheduledAt} 
           onCheckedChange={() => onToggleComplete(task.id, task.isCompleted)}  
           onClick={() => onTaskClick(task)}  
         />

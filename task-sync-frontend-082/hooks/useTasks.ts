@@ -13,6 +13,7 @@ export interface UITask {
   priority: 'Сложно' | 'Средне' | 'Легко';
   isCompleted: boolean;
   description?: string;
+  scheduledAt?: string; 
 }
 
 const mapPriorityFromApi = (priority: TaskPriority): UITask['priority'] => {
@@ -80,6 +81,7 @@ export const useTasks = (): UseTasksReturn => {
           priority: mapPriorityFromApi(t.priority),
           isCompleted: t.isCompleted,
           description: t.description,
+          scheduledAt: t.scheduledAt, 
         }))
       );
     } catch (error) {

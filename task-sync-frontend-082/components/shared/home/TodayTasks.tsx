@@ -58,6 +58,7 @@ export const TodayTasks = ({ tasks, onToggleComplete, onTaskClick }: Props) => {
               timeTo={task.timeTo}
               priority={mapPriorityFromApi(task.priority)}
               checked={task.isCompleted}
+              scheduledAt={task.scheduledAt} 
               onCheckedChange={() => onToggleComplete(task.id, task.isCompleted)}
             />
           </div>
