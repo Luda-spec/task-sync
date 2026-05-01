@@ -21,7 +21,7 @@ export class AuthService {
   private mailer = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT),
-    secure: false, 
+    secure: true, 
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
