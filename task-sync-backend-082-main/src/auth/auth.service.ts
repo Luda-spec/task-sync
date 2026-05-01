@@ -19,12 +19,15 @@ export class AuthService {
   REFRESH_TOKEN_NAME = 'refreshToken';
 
   private mailer = nodemailer.createTransport({
-    host: String(process.env.EMAIL_HOST),
+    host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT),
-    secure: true,
+    secure: false, 
     auth: {
-      user: String(process.env.EMAIL_USER),
-      pass: String(process.env.EMAIL_PASSWORD),
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false, 
     },
   });
 
@@ -59,7 +62,7 @@ export class AuthService {
     const tokens = this.issueTokens(user.id, user.role);
 
     this.sendWelcomeEmail(user.email, user.name).catch(err => {
-      console.error('Failed to send welcome email:', err);
+      console.error('❌ Failed to send welcome email:', err);
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -149,6 +152,8 @@ export class AuthService {
 
   private async sendWelcomeEmail(email: string, name: string) {
     try {
+      console.log(`📧 Attempting to send email to ${email}...`);
+      
       await this.mailer.sendMail({
         from: `"Task Sync" <${process.env.EMAIL_USER}>`,
         to: email,
@@ -173,7 +178,16 @@ export class AuthService {
           </div>
         `,
       });
+      
+      console.log(`✅ Welcome email sent successfully to ${email}`);
     } catch (error) {
+      console.error('❌ Failed to send welcome email:', error);
+      console.error('Email config:', {
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        user: process.env.EMAIL_USER,
+        secure: false,
+      });
     }
   }
 }
