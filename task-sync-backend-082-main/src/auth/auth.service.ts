@@ -57,7 +57,7 @@ export class AuthService {
     const oldUser = await this.userService.getByEmail(dto.email);
 
     if (oldUser) {
-      throw new BadRequestException("User already registered");
+      throw new BadRequestException("Пользователь с таким email уже существует");
     }
 
     const user = await this.userService.create(dto);
@@ -98,13 +98,13 @@ export class AuthService {
     const user = await this.userService.getByEmail(dto.email);
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException("Пользователь с таким email не найден");
     }
 
     const isValid = await verify(user.password, dto.password);
 
     if (!isValid) {
-      throw new UnauthorizedException("Invalid password");
+      throw new UnauthorizedException("Неверный пароль");
     }
 
     return user;
@@ -127,7 +127,7 @@ export class AuthService {
     const result = await this.jwt.verifyAsync(refreshToken);
     
     if (!result) {
-      throw new UnauthorizedException("Invalid refresh token");
+      throw new UnauthorizedException("Сессия истекла, пожалуйста, войдите снова");
     }
 
     const user = await this.userService.getById(result.id);

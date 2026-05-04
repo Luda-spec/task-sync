@@ -1,7 +1,7 @@
 import { IsEmail, IsString, MinLength } from "class-validator";
 
 export class LoginDto {
-    @IsEmail()
+     @IsEmail({}, { message: "Введите корректный email адрес" })
     email: string;
 
     @MinLength(6, {
