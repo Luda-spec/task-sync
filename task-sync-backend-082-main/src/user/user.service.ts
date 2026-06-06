@@ -118,50 +118,39 @@ export class UserService {
   }
 
   async getWeeklyRating() {
-  const now = new Date();
+    const now = new Date();
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    weekStart.setHours(0, 0, 0, 0);
 
-  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
-  weekStart.setHours(0, 0, 0, 0);
-
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 6);
-  weekEnd.setHours(23, 59, 59, 999);
-
-  const users = await this.prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      tasks: {
-        where: {
-          isCompleted: true,
-          // 🔥 ВАЖНО: считаем ПО ДАТЕ ЗАВЕРШЕНИЯ
-          completedAt: {
-            gte: weekStart,
-            lte: weekEnd,
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        _count: {
+          select: {
+            tasks: {
+              where: {
+                isCompleted: true,
+                updatedAt: { gte: weekStart.toISOString() },
+              },
+            },
           },
         },
-        select: {
-          id: true,
-        },
       },
-    },
-  });
+      orderBy: {
+        tasks: { _count: 'desc' },
+      },
+      take: 3,
+    });
 
-  const rating = users
+    return users
+    .filter((u) => u._count.tasks > 0)
     .map((u) => ({
       id: u.id,
       name: u.name || 'Без имени',
-      email: u.email,
-      completedTasks: u.tasks.length,
-    }))
-    .filter((u) => u.completedTasks > 0)
-    .sort((a, b) => b.completedTasks - a.completedTasks);
-
-  return {
-    startDate: weekStart,
-    endDate: weekEnd,
-    users: rating,
-  };
-}
+      email: u.email, 
+      completedTasks: u._count.tasks,
+    }));
+  }
 }

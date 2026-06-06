@@ -14,12 +14,6 @@ interface LeaderUser {
   completedTasks: number;
 }
 
-interface WeeklyRatingResponse {
-  startDate: string;
-  endDate: string;
-  users: LeaderUser[];
-}
-
 const DAILY_QUOTES = [
   "Дисциплина — это мост между целями и достижениями.",
   "Начни с малого, но начни сейчас.",
@@ -43,28 +37,19 @@ const DAILY_TASKS = [
   "Ответить на отложенные сообщения",
   "Спланировать меню на завтра",
   "Сделать 20 минут зарядки",
-  "Разбрать одну папку на компьютере или в почте",
-  "Поблагодарить кого-то за помощь сегодня",
+  "Разбрать одну папку на компьютере или в почте)",
+  "Поблагoдарить кого-то за помощь сегодня",
   "Закрыть лишние вкладки в браузере"
 ];
-
 export default function LeaderboardPage() {
   const router = useRouter();
-
   const [users, setUsers] = useState<LeaderUser[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [weekRange, setWeekRange] = useState<{
-    startDate: string;
-    endDate: string;
-  } | null>(null);
-
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
 
   const dailyContent = useMemo(() => {
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 0);
-
     const diff = now.getTime() - startOfYear.getTime();
     const oneDay = 1000 * 60 * 60 * 24;
     const dayOfYear = Math.floor(diff / oneDay);
@@ -75,38 +60,30 @@ export default function LeaderboardPage() {
     };
   }, []);
 
-  const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString('ru-RU');
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchLeaderboard = async () => {
       try {
-        const { data } = await api.get<WeeklyRatingResponse>('/user/rating');
-
-        setUsers(data.users);
-        setWeekRange({
-          startDate: data.startDate,
-          endDate: data.endDate,
-        });
-
+        const { data } = await api.get('/user/rating');
+        setUsers(data);
+        
         const { data: profileData } = await api.get('/user/profile');
         setCurrentUser(profileData.user);
-      } catch (e) {
-        console.error('Ошибка загрузки рейтинга', e);
-        setUsers([]);
+      } catch (error) {
+        console.error("Ошибка загрузки", error);
+        setUsers([]); 
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchLeaderboard();
   }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Загрузка...</p>
         </div>
       </div>
@@ -116,121 +93,115 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen px-5 sm:px-6 lg:px-8 py-6 pb-24 lg:pt-28">
       <div className="max-w-3xl mx-auto w-full">
-
-        {/* HEADER */}
-        <div className="relative w-full px-5 py-3 sm:py-5 mb-6">
+        
+        <div className="relative w-full flex items-center px-5 py-3 sm:py-5 mb-6">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.back()}
-            className="absolute left-5 top-3 sm:top-5"
+            className="absolute left-5 top-3 sm:top-5 cursor-pointer"
           >
             <Image src="/arrow_back.svg" alt="Назад" width={24} height={24} />
           </Button>
+          <Title 
+            text="Топ недели" 
+            size="md" 
+            className="mx-auto font-semibold text-foreground" 
+          />
+          <div className="absolute right-5 top-3 sm:top-5 w-6 h-6" />
+        </div>
 
-          <div className="text-center">
-            <Title text="Топ недели" size="md" className="font-semibold" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-2xl border border-indigo-100 shadow-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl leading-none mt-0.5">💡</span>
+              <div>
+                <p className="text-xs font-semibold text-indigo-900 uppercase tracking-wide mb-1">Мысль дня</p>
+                <p className="text-sm text-indigo-800 italic leading-snug">{dailyContent.quote}</p>
+              </div>
+            </div>
+          </div>
 
-            {weekRange && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {formatDate(weekRange.startDate)} — {formatDate(weekRange.endDate)}
-              </p>
-            )}
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-2xl border border-emerald-100 shadow-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl leading-none mt-0.5">🎯</span>
+              <div className="flex-1">
+                <p className="text-xs font-semibold text-emerald-900 uppercase tracking-wide mb-1">Задача-подсказка (добавь в свой список)</p>
+                <p className="text-sm text-emerald-800 font-medium">{dailyContent.task}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* DAILY BLOCKS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-          <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
-            <p className="text-xs font-semibold text-indigo-900 mb-1">
-              Мысль дня
-            </p>
-            <p className="text-sm text-indigo-800 italic">
-              {dailyContent.quote}
-            </p>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
-            <p className="text-xs font-semibold text-emerald-900 mb-1">
-              Задача дня
-            </p>
-            <p className="text-sm text-emerald-800 font-medium">
-              {dailyContent.task}
-            </p>
-          </div>
-        </div>
-
-        {/* LEADERBOARD */}
         <div className="space-y-4">
           {users.length > 0 ? (
             users.map((user, index) => {
               const isMe = user.id === currentUser?.id;
 
               return (
-                <div
+                <div 
                   key={user.id}
-                  className={`flex justify-between items-center p-4 rounded-2xl border ${
-                    isMe
-                      ? 'bg-purple-50 border-purple-300'
-                      : index === 0
-                      ? 'bg-yellow-50 border-yellow-300'
-                      : index === 1
-                      ? 'bg-gray-50 border-gray-200'
-                      : index === 2
-                      ? 'bg-amber-50 border-amber-200'
-                      : 'bg-white border-gray-100'
+                  className={`flex items-center justify-between p-4 rounded-2xl shadow-sm border transition-transform ${
+                    isMe 
+                      ? 'bg-purple-50 border-purple-300 z-10 shadow-md'
+                      : index === 0 
+                        ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-300' 
+                        : index === 1 
+                        ? 'bg-gray-50 border-gray-200'
+                        : index === 2 
+                        ? 'bg-amber-50 border-amber-200'
+                        : 'bg-white border-gray-100'
                   }`}
                 >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="text-xl font-bold w-8 text-center">
-                      {index === 0
-                        ? '🥇'
-                        : index === 1
-                        ? '🥈'
-                        : index === 2
-                        ? '🥉'
-                        : `#${index + 1}`}
-                    </div>
-
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <span className={`text-2xl font-bold w-8 text-center flex-shrink-0 ${
+                      index === 0 ? 'text-yellow-600' : 
+                      index === 1 ? 'text-gray-500' : 
+                      index === 2 ? 'text-orange-600' : 'text-muted-foreground'
+                    }`}>
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                    </span>
+                    
                     <div className="flex flex-col min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold truncate">
+                        <span className="font-semibold text-foreground text-lg truncate">
                           {user.name}
                         </span>
-
                         {isMe && (
-                          <span className="text-[10px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
-                            Вы
+                          <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full whitespace-nowrap">
+                            Это вы
                           </span>
                         )}
                       </div>
-
+                      
                       <span className="text-xs text-muted-foreground truncate">
                         {user.email}
                       </span>
+                      
+                      {isMe && (
+                        <span className="text-[11px] text-purple-700 font-medium mt-0.5 animate-pulse">
+                          ✨ Вы супер!
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-xl font-bold text-primary">
-                      {user.completedTasks}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      задач
-                    </div>
+                  <div className="flex flex-col items-end pl-3 flex-shrink-0">
+                    <span className="text-xl font-bold text-primary">{user.completedTasks}</span>
+                    <span className="text-xs text-muted-foreground">задач</span>
                   </div>
                 </div>
               );
             })
           ) : (
-            <div className="text-center py-20">
-              <p className="text-4xl mb-2">🏁</p>
-              <p className="text-muted-foreground">
-                Пока нет данных за эту неделю
-              </p>
+            <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+              <p className="text-4xl mb-4">🏁</p>
+              <p className="text-muted-foreground text-lg">Пока нет активных участников</p>
+              <p className="text-sm text-muted-foreground mt-2">Выполняй задачи, чтобы попасть в топ!</p>
             </div>
           )}
         </div>
+
       </div>
     </div>
   );
