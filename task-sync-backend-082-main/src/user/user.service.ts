@@ -117,7 +117,7 @@ export class UserService {
     });
   }
 
- async getWeeklyRating() {
+  async getWeeklyRating() {
   const now = new Date();
 
   const weekStart = startOfWeek(now, { weekStartsOn: 1 });
@@ -135,7 +135,8 @@ export class UserService {
       tasks: {
         where: {
           isCompleted: true,
-          updatedAt: {
+          // 🔥 ВАЖНО: считаем ПО ДАТЕ ЗАВЕРШЕНИЯ
+          completedAt: {
             gte: weekStart,
             lte: weekEnd,
           },
@@ -154,6 +155,7 @@ export class UserService {
       email: u.email,
       completedTasks: u.tasks.length,
     }))
+    .filter((u) => u.completedTasks > 0)
     .sort((a, b) => b.completedTasks - a.completedTasks);
 
   return {
